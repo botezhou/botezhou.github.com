@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{margin: 0;padding: 0;list-style: none;}
+		#btn{padding:20px;position:absolute;left:70px;top:50%;font-size: 20px;background: aqua;border:2px solid #ccc;}
+		#btn:hover{box-shadow:2px 5px 5px #000;background: pink;}
+
+		@keyframes test{
+			from{ background-position: 0 0;}
+			to{ background-position:330px 0;}
+		}
+		body{background: url(img/1.jpg) no-repeat;background-size:100%;text-align: center;overflow: hidden;}
+		 h1{margin:30px auto;width:330px;position:relative;height:50px;text-align: center;margin-top:30px;}
+		 h1 span{position:absolute;left:0;top:0;color:aqua;}
+		 h1 .clip{ background: -webkit-linear-gradient(-45deg,rgba(0,0,0,0) 40px,#000 60px, rgba(0,0,0,0) 80px); -webkit-background-clip:text; color:rgba(0,0,0,0); animation:test 5s linear infinite;}
+		.box{width: 900px;height:500px;margin:-10px auto;overflow:auto;z-index: 999999999;position:relative;}
+		.box #ul1{width: 900px;}		
+		.box #ul1 li{width: 260px;height:160px;float:left;margin:10px;position:relative;left:0;top:0;overflow: hidden;box-shadow: inset 2px 5px 10px #fff,5px 10px 10px #000;border-radius: 10px;}
+		.box #ul1 li img{width: 260px;height: 160px;vertical-align: top;}
+		.box #ul1 li span{position:absolute;left:-260px;top:0;width: 260px;height: 160px;background: #000;opacity:0.8;color:#fff;font-size: 30px;text-align: center;line-height: 160px;}
+
+	</style>
+	<script src="move.js"></script>
+	<script>
+	function through(obj){
+		function a2d(n){
+			return n*180/Math.PI;
+		}
+		function d2a(n){
+			return n*Math.PI/180;
+		}
+		function hoverDir(obj,ev){
+			var x = obj.offsetLeft+obj.offsetWidth/2 -ev.clientX;
+			var y = obj.offsetTop+obj.offsetHeight/2 -ev.clientY;
+			return Math.round((a2d(Math.atan2(y,x))+180)/90)%4;
+		}
+		//进来
+		obj.onmouseover = function(ev){
+			var oS =obj.children[1];
+			var oEvent = ev||event;
+			var oFrom = oEvent.fromElement||oEvent.relatedTarget;
+			if(obj.contains(oFrom)){
+				return;
+			}
+			//滑过方向
+			var dir = hoverDir(obj,oEvent);
+			switch(dir){
+				//右边0
+				case 0:
+				oS.style.left = '260px';
+				oS.style.top = '0px';
+				break;
+				//下边1
+				case 1:
+				oS.style.left = '0px';
+				oS.style.top = '160px';
+				break;
+				//左边2
+				case 2:
+				oS.style.left = '-260px';
+				oS.style.top = '0px';
+				break;
+				//上边3
+				case 3:
+				oS.style.left = '0';
+				oS.style.top = '-160px';
+				break;
+			}
+			move(oS,{left:0,top:0});
+		};
+		//出去
+		obj.onmouseout = function(ev){
+			var oS =obj.children[1];
+			var oEvent = ev||event;
+			var oTo = oEvent.toElement||oEvent.relatedTarget;
+			if(obj.contains(oTo)){return;}
+			var dir = hoverDir(obj,oEvent);
+			switch(dir){
+				case 0:
+				move(oS,{left:260,top:0});
+				break;
+				case 1:
+				move(oS,{left:0,top:160});
+				break;
+				case 2:
+				move(oS,{left:-260,top:0});
+				break;
+				case 3:
+				move(oS,{left:0,top:-160});
+				break;
+			}
+		};
+	}
+window.onload=function(){
+	var oUl=document.getElementById('ul1');
+
+
+	var aLi=oUl.children;
+
+	var aS=oUl.getElementsByTagName('span');
+
+	var oBtn = document.getElementById('btn');
+	
+
+	for (var i = 0; i < aLi.length; i++) {
+		through(aLi[i]);
+		;(function(index){
+			aLi[index].onclick=function(){	
+				window.open('active/demo'+index+'.html');
+		    };
+		})(i);		
+	};	
+	var bOk = false;
+//float 转换成 absolute 定位 布局转换
+    var aPos = [];
+    for(var i = 0;i<aLi.length;i++){
+        aPos.push({left:aLi[i].offsetLeft,top:aLi[i].offsetTop});
+    }
+//一定不能偷懒儿 要重新循环一次  ???
+	for(var i = 0;i<aLi.length;i++){
+		aLi[i].style.margin = 0;
+		aLi[i].style.position = 'absolute';
+		aLi[i].style.left = aPos[i].left+'px';
+		aLi[i].style.top = aPos[i].top+'px';
+	}
+	oBtn.onclick = function(){
+
+	    if(bOk){return;}
+	    bOk = true;
+		for(var i = 0;i<aLi.length;i++){
+			(function(index){
+				setTimeout(function(){
+					move(aLi[index],{left:0,top:0,width:0,height:0,opacity:0},{
+						complete:function(){
+							if(index == aLi.length-1){
+								//alert('亲最后一个了');
+								//
+								for(var i = aLi.length-1;i>=0;i--){
+									(function(index){		
+										setTimeout(function(){								
+										move(aLi[index],{left:aPos[index].left,top:aPos[index].top,width:260,height:160,opacity:1},{
+												complete:function(){
+													if(index==0){
+														bOk = false;
+													}	
+												}	
+
+											});
+
+										},100*(aLi.length-1-i));								
+									})(i);									
+								}
+							}	
+						}
+					});
+				},100*i);
+			})(i);		
+		}
+	};
+
+};
+	</script>
+</head>
+<body>
+	<h1>
+		<span>JS特效+CSS3特效展示</span>
+		<span class="clip">JS特效+CSS3特效展示</span>
+	</h1>
+	
+	<input type="button" value="撩HR神器" id="btn">
+	<div class="box">
+		<ul id="ul1">
+			<li><img src="img/3.jpg" alt=""><span>3D图片环</span></li>
+			<li><img src="img/4.jpg" alt=""><span>简单版捕鱼达人</span></li>
+			<li><img src="img/5.jpg" alt=""><span>照片墙</span></li>
+			<li><img src="img/6.jpg" alt=""><span>手风琴</span></li>
+			<li><img src="img/7.jpg" alt=""><span>进度条轮播图</span></li>
+			<li><img src="img/8.jpg" alt=""><span>圆的运动</span></li>
+			<li><img src="img/9.jpg" alt=""><span>百叶窗</span></li>
+			<li><img src="img/10.jpg" alt=""><span>模拟版钢琴</span></li>
+			<li><img src="img/11.jpg" alt=""><span>放大镜</span></li>	
+			<li><img src="img/16.jpg" alt=""><span>拖动比例照片</span></li>	
+			<li><img src="img/17.jpg" alt=""><span>放大镜</span></li>	
+			<li><img src="img/18.jpg" alt=""><span>放大镜</span></li>	
+		</ul>	
+	</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="author" content="智能社 - zhinengshe.com">
+<meta name="copyright" content="智能社 - zhinengshe.com">
+<title>智能社 - www.zhinengshe.com</title>
+<style>
+	*{margin:0;padding:0; list-style:none;}
+	body{background: #ccc;}
+	#box{width:600px;height:500px;margin:50px auto; position:relative; overflow:hidden;}
+	ul{ position:absolute;height:500px; left:0; top:0;}
+	ul li{width:600px;height:500px; float:left; line-height:400px; text-align:center;}
+	ul li img{width: 600px;height: 500px;}
+	ol{width:500px; position:absolute; left:50%;margin-left:-200px; bottom:20px;}
+	ol li{width:80px;height:20px; float:left;margin:0 5px; background:#ccc;}
+
+	ol li span{width:0px; height:20px; background:yellow; display:inline-block;}
+</style>
+<script src="../move.js"></script>
+<script>
+	window.onload = function(){
+		var oBox = document.getElementById('box');	
+		var oUl = oBox.children[0];
+		var aLi = oUl.children;
+		var oOl = oBox.children[1];
+		var	aSpan = oOl.getElementsByTagName('span');
+		oUl.style.width = aLi[0].offsetWidth*aLi.length+'px';
+		var iNow = 0;
+		function next(){
+			//改其中一个宽度
+			move(aSpan[iNow],{width:80},{
+				complete:function(){
+					iNow++;
+					if(iNow == aSpan.length){
+						iNow = 0;
+					}
+					//让ul动
+					move(oUl,{left:-aLi[0].offsetWidth*iNow},{
+						complete:function(){
+							//清除宽度
+							for(var i = 0;i<aSpan.length;i++){
+			
+				aSpan[i].style.width = 0;					
+							}
+							next();	
+						}
+					});
+					
+				}	
+			});	
+		}		
+		next();
+	};
+</script>
+</head>
+<body>
+	<div id="box">
+    	<ul>
+        	<li><img src="img2/6.jpg" alt=""></li>
+        	<li><img src="img2/7.jpg" alt=""></li>
+        	<li><img src="img2/8.jpg" alt=""></li>
+        	<li><img src="img2/9.jpg" alt=""></li>
+        	<li><img src="img2/10.jpg" alt=""></li>
+        </ul>
+        <ol>
+        	<li><span></span></li>
+        	<li><span></span></li>
+        	<li><span></span></li>
+        	<li><span></span></li>
+        	<li><span></span></li>
+        </ol>
+    </div>
+</body>
+</html>
