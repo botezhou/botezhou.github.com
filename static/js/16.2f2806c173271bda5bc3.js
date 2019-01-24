@@ -1,2 +1,0 @@
-webpackJsonp([16],{"DC/Y":function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var r={render:function(){var t=this.$createElement,e=this._self._c||t;return e("div",{staticClass:"p20"},[e("code",{staticStyle:{"margin-top":"15px"}},[this._v("这里使用 window.print() 来实现下载pdf的功能")]),this._v(" "),e("router-link",{attrs:{target:"_blank",to:"/print/download"}},[e("el-button",{attrs:{type:"primary"}},[this._v("打印PDF")])],1)],1)},staticRenderFns:[]},i=n("C7Lr")(null,r,!1,null,null,null);e.default=i.exports}});
-//# sourceMappingURL=16.2f2806c173271bda5bc3.js.map
